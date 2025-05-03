@@ -78,7 +78,13 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      role: insertUser.role || "employee",
+      profileImage: insertUser.profileImage || null,
+      active: insertUser.active !== undefined ? insertUser.active : true
+    };
     this.users.set(id, user);
     return user;
   }
@@ -103,7 +109,12 @@ export class MemStorage implements IStorage {
 
   async createWorksite(insertWorksite: InsertWorksite): Promise<Worksite> {
     const id = this.worksiteIdCounter++;
-    const worksite: Worksite = { ...insertWorksite, id };
+    const worksite: Worksite = { 
+      ...insertWorksite, 
+      id,
+      radius: insertWorksite.radius || 100,
+      active: insertWorksite.active !== undefined ? insertWorksite.active : true
+    };
     this.worksites.set(id, worksite);
     return worksite;
   }
@@ -143,7 +154,15 @@ export class MemStorage implements IStorage {
   async createCheckin(insertCheckin: InsertCheckin): Promise<Checkin> {
     const id = this.checkinIdCounter++;
     const timestamp = new Date();
-    const checkin: Checkin = { ...insertCheckin, id, timestamp };
+    const checkin: Checkin = { 
+      ...insertCheckin, 
+      id, 
+      timestamp,
+      status: insertCheckin.status || "pending",
+      verificationImageId: insertCheckin.verificationImageId || null,
+      notes: insertCheckin.notes || null,
+      isOnsite: insertCheckin.isOnsite !== undefined ? insertCheckin.isOnsite : false
+    };
     this.checkins.set(id, checkin);
     return checkin;
   }
