@@ -12,18 +12,22 @@ import Reports from "@/pages/reports";
 import Settings from "@/pages/settings";
 import Login from "@/pages/login";
 import CheckIn from "@/pages/check-in";
+import WorkerHome from "@/pages/worker-home";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 
 function Router() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [location, setLocation] = useLocation();
 
   useEffect(() => {
     // Check if user is logged in
-    const user = localStorage.getItem("user");
-    if (user) {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
       setIsLoggedIn(true);
+      setUserRole(user.role);
     } else if (location !== "/login" && location !== "/check-in") {
       setLocation("/login");
     }
@@ -32,9 +36,11 @@ function Router() {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setIsLoggedIn(false);
+    setUserRole(null);
     setLocation("/login");
   };
 
+  // Not logged in - show login or check-in
   if (!isLoggedIn && location !== "/check-in") {
     return (
       <Switch>
@@ -47,6 +53,21 @@ function Router() {
     );
   }
 
+  // Logged in as employee - show worker interface
+  if (userRole === "employee") {
+    return (
+      <Switch>
+        <Route path="/" component={WorkerHome} />
+        <Route path="/check-in" component={CheckIn} />
+        <Route path="/login" component={Login} />
+        <Route>
+          <WorkerHome />
+        </Route>
+      </Switch>
+    );
+  }
+
+  // Logged in as manager or admin - show manager interface
   return (
     <Switch>
       <Route path="/" component={Dashboard} />

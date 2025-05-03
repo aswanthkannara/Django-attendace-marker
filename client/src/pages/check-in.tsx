@@ -24,6 +24,8 @@ export default function CheckIn() {
   const [, setLocation] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isWorkerMode, setIsWorkerMode] = useState(false);
   const { toast } = useToast();
   
   // Fetch worksites
@@ -42,14 +44,31 @@ export default function CheckIn() {
   const { videoRef, photo, error: cameraError, loading: cameraLoading, startCamera, stopCamera, takePhoto } = useCamera();
   const { latitude, longitude, error: locationError, loading: locationLoading } = useGeolocation();
   
-  // Form setup
+  // Check if user is logged in
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setCurrentUser(user);
+      setIsWorkerMode(user.role === "employee");
+    }
+  }, []);
+  
+  // Form setup with conditional default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      userId: "",
+      userId: currentUser?.id?.toString() || "",
       worksiteId: "",
     },
   });
+  
+  // Update form when currentUser changes
+  useEffect(() => {
+    if (currentUser && isWorkerMode) {
+      form.setValue("userId", currentUser.id.toString());
+    }
+  }, [currentUser, form, isWorkerMode]);
   
   // Handle camera activation
   const handleActivateCamera = async () => {
@@ -162,34 +181,50 @@ export default function CheckIn() {
             ) : (
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="userId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Employee</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                          disabled={isSubmitting}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select employee" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {users && users.map((user: any) => (
-                              <SelectItem key={user.id} value={user.id.toString()}>
-                                {user.fullName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Only show Employee dropdown in manager mode */}
+                  {!isWorkerMode ? (
+                    <FormField
+                      control={form.control}
+                      name="userId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Employee</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                            disabled={isSubmitting}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select employee" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {users && users.map((user: any) => (
+                                <SelectItem key={user.id} value={user.id.toString()}>
+                                  {user.fullName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <div className="bg-blue-50 p-4 rounded-md mb-4">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <i className="ri-user-line text-primary text-lg"></i>
+                        </div>
+                        <div className="ml-3">
+                          <h3 className="text-sm font-medium text-blue-800">
+                            Checking in as: {currentUser?.fullName}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   <FormField
                     control={form.control}

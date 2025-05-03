@@ -73,6 +73,10 @@ export default function Login() {
             <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
             <CardDescription className="text-center">
               Enter your credentials to access your account
+              <div className="mt-2 text-xs text-neutral-500">
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2">Managers</span>
+                <span className="bg-green-100 text-green-800 px-2 py-1 rounded">Workers</span>
+              </div>
             </CardDescription>
           </CardHeader>
           <CardContent>
