@@ -186,13 +186,43 @@ export class MemStorage implements IStorage {
     // Create admin user
     const adminUser: InsertUser = {
       username: "admin",
-      password: "admin123", // In a real app, this would be hashed
+      password: "password", // In a real app, this would be hashed
       fullName: "Admin User",
       email: "admin@worktrack.com",
       role: "admin",
       active: true,
     };
     this.createUser(adminUser);
+    
+    // Create employee users
+    const employeeUsers: InsertUser[] = [
+      {
+        username: "employee1",
+        password: "password", // In a real app, this would be hashed
+        fullName: "John Worker",
+        email: "john@worktrack.com",
+        role: "employee",
+        active: true,
+      },
+      {
+        username: "employee2",
+        password: "password", // In a real app, this would be hashed
+        fullName: "Sarah Builder",
+        email: "sarah@worktrack.com",
+        role: "employee",
+        active: true,
+      },
+      {
+        username: "manager1",
+        password: "password", // In a real app, this would be hashed
+        fullName: "Michael Manager",
+        email: "michael@worktrack.com",
+        role: "manager",
+        active: true,
+      }
+    ];
+    
+    employeeUsers.forEach(user => this.createUser(user));
 
     // Create some sample worksites
     const sampleWorksites: InsertWorksite[] = [

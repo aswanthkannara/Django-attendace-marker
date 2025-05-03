@@ -200,11 +200,11 @@ export default function CheckIn() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {users && users.map((user: any) => (
+                              {users && Array.isArray(users) ? users.map((user: any) => (
                                 <SelectItem key={user.id} value={user.id.toString()}>
                                   {user.fullName}
                                 </SelectItem>
-                              ))}
+                              )) : null}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -243,11 +243,11 @@ export default function CheckIn() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {worksites && worksites.map((site: any) => (
+                            {worksites && Array.isArray(worksites) ? worksites.map((site: any) => (
                               <SelectItem key={site.id} value={site.id.toString()}>
                                 {site.name}
                               </SelectItem>
-                            ))}
+                            )) : null}
                           </SelectContent>
                         </Select>
                         <FormMessage />
