@@ -96,7 +96,7 @@ def login_view(request):
         password = request.POST.get('password')
         print("hiiiiii")
         if username and password:
-            user = authenticate(request, username=username, password=password)
+            user = User.objects.filter(username=username, password=password).first()
             print('userrrrr')
             if user:
                 login(request, user)
