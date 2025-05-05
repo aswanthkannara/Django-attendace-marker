@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # CORS middleware
@@ -92,12 +93,14 @@ WSGI_APPLICATION = 'worktrack.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+DB_URL = 'postgresql://worktracker_lihn_user:VXQAZ5BrBfo22ozYIsGdZp7LwuxFTmWD@dpg-d0c48rhr0fns73e1l000-a.oregon-postgres.render.com/worktracker_lihn'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+     "default": dj_database_url.parse(DB_URL)
 }
 
 
